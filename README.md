@@ -1,2 +1,2 @@
-# Lab_models
-All models that can be put into use
+# Visualization
+Some demo of data visualization written in python
