@@ -7,8 +7,14 @@ __author__ = "JOHNKYON"
 
 
 def judgement(x, y):
-    print x
-    print y
+    """
+    计算准确率
+    :param x:
+    :param y:
+    :return:
+    """
+    # print x
+    # print y
     T = float(0)
     F = float(0)
     counter = float(0)

@@ -26,10 +26,13 @@ x = [[a[0]] for a in raw]
 
 x = src.init.class_init_tf_idf(x)
 
+#　新增lsi模型的应用，用于改进分类效果
+
 
 y = [[(a[1]-10400000)/1000] for a in raw]
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
 
 print "model train start"
 

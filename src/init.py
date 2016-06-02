@@ -98,6 +98,11 @@ def tSNE_init_test(raw):
 
 
 def class_init_tf_idf(raw):
+    """
+    用于将原始文本转换为tf-idf表示的矩阵
+    :param raw:
+    :return:
+    """
     dic_corpus = text_digitalize(raw)
     dictionary = dic_corpus[0]
     corpus = dic_corpus[1]
@@ -115,13 +120,7 @@ def class_init_tf_idf(raw):
     print max(dictionary.token2id.values())
 
     # 建立并初始化tfidf矩阵
-    arr = np.zeros([len(corpus), max(dictionary.token2id.values())], dtype='float64')
-
-    counter = 0
-    for line in corpus_tfidf:
-        for ele in line:
-            arr[counter][ele[0] - 1] = ele[1]
-        counter += 1
+    arr = tfidf_matrix(dictionary, corpus, dic_corpus)
 
     return arr
 
@@ -159,3 +158,20 @@ def text_digitalize(raw):
     raw_doc = [x[0] for x in raw_without_sw]
     dic_corpus = algorithm_collection.digitalize(raw_doc)
     return dic_corpus
+
+
+def tfidf_matrix(dictionary, corpus, corpus_tfidf):
+    """
+    用于将tfidf信息转化为矩阵
+    :param corpus_tfidf:
+    :return:
+    """
+    arr = np.zeros([len(corpus), max(dictionary.token2id.values())], dtype='float64')
+
+    counter = 0
+    for line in corpus_tfidf:
+        for ele in line:
+            arr[counter][ele[0] - 1] = ele[1]
+        counter += 1
+
+    return arr
