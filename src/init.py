@@ -82,11 +82,11 @@ def tSNE_init(raw, topics, labels):
 
     mtr = np.array(mtr)
 
-    label = np.transpose(np.array(['#' + str(hex(np.square(long(str(x / 1000)[1:])) * 90))[2:-1] for x in labels]))
-    # label = np.transpose(np.array(['#' + str(hex(np.sqrt(long(str(x / 100000)[1:])) * 2948576))[2:-1] for x in raw]))
-    print label
+    # labels = np.transpose(np.array(['#' + str(hex(np.square(long(str(x / 1000)[1:])) * 90))[2:-1] for x in labels]))
+    # # labels = np.transpose(np.array(['#' + str(hex(np.sqrt(long(str(x / 100000)[1:])) * 2948576))[2:-1] for x in raw]))
+    # print labels
 
-    return mtr, label
+    return mtr, labels
 
 
 def tSNE_init_test(raw):
@@ -169,7 +169,7 @@ def tfidf_matrix(dictionary, corpus, corpus_tfidf):
     arr = np.zeros([len(corpus), max(dictionary.token2id.values())], dtype='float64')
 
     counter = 0
-    for line in corpus_tfidf:
+    for line in corpus_tfidf[1]:
         for ele in line:
             arr[counter][ele[0] - 1] = ele[1]
         counter += 1

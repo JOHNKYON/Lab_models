@@ -26,30 +26,37 @@ x = [[a[0]] for a in raw]
 
 x = src.init.class_init_tf_idf(x)
 
-#　新增lsi模型的应用，用于改进分类效果
-
-
 y = [[(a[1]-10400000)/1000] for a in raw]
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+# 新增lsi模型的应用，用于改进分类效果
 
+# mtr, label = src.init.tSNE_init(raw, 23, y)
+#
+# x = mtr
+# y = label
 
-print "model train start"
+precision = 0
 
-clf = neighbors.KNeighborsClassifier(weights='distance', algorithm='auto')
+for num in range(0, 50):
 
-print "mode train finished"
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-print "test start"
-clf.fit(x_train, y_train)
+    print "model train start"
 
-print "test finished"
+    clf = neighbors.KNeighborsClassifier(weights='distance', algorithm='auto')
 
-y_test = [x[0] for x in y_test]
+    print "mode train finished"
 
-precision = src.judgement.judgement(np.array(y_test), clf.predict(x_test))
+    print "test start"
+    clf.fit(x_train, y_train)
 
-print precision
+    print "test finished"
+
+    y_test = [a[0] for a in y_test]
+
+    precision += src.judgement.judgement(np.array(y_test), clf.predict(x_test))
+
+print precision/50
 
 # precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))
 #
