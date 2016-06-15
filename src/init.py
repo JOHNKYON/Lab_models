@@ -175,3 +175,26 @@ def tfidf_matrix(dictionary, corpus, corpus_tfidf):
         counter += 1
 
     return arr
+
+
+def not_in(ele):
+    return ele if ele not in stopwords else None
+
+
+def neural_init(raw):
+    """
+    用于将clean_person中的字段初始化为神经网络能接受的初始值
+    字符串只简单分词
+    :param raw:
+    :return:
+    """
+    raw_without_space = map(lambda x: [re.sub('\s*', '', x[0]), re.sub('\s*', '', x[1]), x[2], re.sub('\s*', '', x[3]),
+                                       re.sub('\s*', '', x[4]), x[5]], raw)
+
+    jieba.load_userdict("data/jieba_dict.txt")
+    raw_cut = [[jieba.cut(x[0], cut_all=False), jieba.cut(x[1], cut_all=False), x[2], jieba.cut(x[3], cut_all=False),
+                jieba.cut(x[4], cut_all=False), x[5]] for x in raw_without_space]
+
+    raw_without_sw = map(lambda x: [[filter(not_in, x[0])], filter(not_in, x[1]), x[2], filter(not_in, x[3]),
+                                    filter(not_in, x[4]), x[5]], raw_cut)
+    return raw_without_sw

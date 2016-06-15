@@ -11,7 +11,12 @@ conf.jieba_conf.init()
 
 pg_conf = conf.pg_config
 
-raw = src.pg.pg_select(pg_conf)
+sql = """   SELECT name, description, category
+                FROM company_position_new
+                WHERE company_id IS NOT NULL AND category > 100 AND (category > 10400000 AND category < 10500000)
+                ORDER BY category"""
+
+raw = src.pg.pg_select(pg_conf, sql)
 # raw = load_digits()
 # raw.data.shape
 

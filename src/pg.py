@@ -34,7 +34,7 @@ def pg_insert(bucket, pg_conf):
     input_file.close()
 
 
-def pg_select(pg_conf):
+def pg_select(pg_conf, query):
     """
     查询category和对应的职位描述
     :return dict:
@@ -44,10 +44,7 @@ def pg_select(pg_conf):
 
     cursor = connect.cursor()
 
-    sql = """   SELECT name, description, category
-                FROM company_position_new
-                WHERE company_id IS NOT NULL AND category > 100 AND (category > 10400000 AND category < 10500000)
-                ORDER BY category"""
+    sql = query
 
     cursor.execute(sql)
 
