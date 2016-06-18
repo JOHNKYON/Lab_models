@@ -20,7 +20,7 @@ sql = """SELECT * FROM clean_person WHERE label = False LIMIT 3000"""
 
 raw = src.pg.pg_select(pg_conf, sql)
 
-sql = """SELECT * FROM clean_person WHERE label = True LIMIT 6000"""
+sql = """SELECT * FROM clean_person WHERE label = True LIMIT 3000"""
 
 raw += src.pg.pg_select(pg_conf, sql)
 
@@ -30,27 +30,33 @@ x = [[x[1], x[3], x[5], x[6], x[7], x[8]] for x in raw]
 
 x = src.init.neural_init(x)
 
-y = [x[9] for a in raw]
+y = [a[9] for a in raw]
+
+x = np.array(x)
+
+# 1,0为True 0,1为False
+y = np.array(map(src.init.label_init, y))
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
+dim = len(x[0])
 
 # 初始化完成
 # TODO: 需要修改初始化过程使得输入源符合神经网络的输入方式。输出为二维
 
 model = Sequential()
 
-model.add(Dense(output_dim=64, input_dim=6))
-model.add(Activation("relu"))
+model.add(Dense(output_dim=64, input_dim=dim))
+model.add(Activation("tanh"))
 model.add(Dense(output_dim=2))
-model.add(Activation("softmax"))
 
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
-model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True))
+model.fit(x_train, y_train, nb_epoch=5, show_accuracy=True, validation_split=0.2, shuffle=True)
 
-model.fit(x_train, y_train, nb_epoch=5, batch_size=32)
+print "fit finished"
 
-loss_and_metrics = model.evaluate(x_test, y_test, batch_size=32)
+loss_and_metrics = model.evaluate(x_test, y_test, batch_size=30, show_accuracy=True)
 
 print loss_and_metrics
 

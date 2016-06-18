@@ -120,7 +120,7 @@ def class_init_tf_idf(raw):
     print max(dictionary.token2id.values())
 
     # 建立并初始化tfidf矩阵
-    arr = tfidf_matrix(dictionary, corpus, dic_corpus)
+    arr = matrix_former(dictionary, corpus, dic_corpus)
 
     return arr
 
@@ -160,16 +160,16 @@ def text_digitalize(raw):
     return dic_corpus
 
 
-def tfidf_matrix(dictionary, corpus, corpus_tfidf):
+def matrix_former(dictionary, corpus, dic_corpus):
     """
     用于将tfidf信息转化为矩阵
-    :param corpus_tfidf:
+    :param dic_corpus:
     :return:
     """
     arr = np.zeros([len(corpus), max(dictionary.token2id.values())], dtype='float64')
 
     counter = 0
-    for line in corpus_tfidf[1]:
+    for line in dic_corpus[1]:
         for ele in line:
             arr[counter][ele[0] - 1] = ele[1]
         counter += 1
@@ -188,13 +188,34 @@ def neural_init(raw):
     :param raw:
     :return:
     """
-    raw_without_space = map(lambda x: [re.sub('\s*', '', x[0]), re.sub('\s*', '', x[1]), x[2], re.sub('\s*', '', x[3]),
-                                       re.sub('\s*', '', x[4]), x[5]], raw)
+    test = raw[0]
+    re.sub('\s*', '', test[0])
+    re.sub('\s*', '', test[1])
+    re.sub('\s*', '', test[3])
+
+    raw_without_space = map(lambda a: [re.sub('\s*', '', a[0]), re.sub('\s*', '', a[1]), a[2],
+                                       re.sub('\s*', '', str(a[3])), re.sub('\s*', '', str(a[4])), a[5]], raw)
 
     jieba.load_userdict("data/jieba_dict.txt")
     raw_cut = [[jieba.cut(x[0], cut_all=False), jieba.cut(x[1], cut_all=False), x[2], jieba.cut(x[3], cut_all=False),
                 jieba.cut(x[4], cut_all=False), x[5]] for x in raw_without_space]
 
-    raw_without_sw = map(lambda x: [[filter(not_in, x[0])], filter(not_in, x[1]), x[2], filter(not_in, x[3]),
-                                    filter(not_in, x[4]), x[5]], raw_cut)
-    return raw_without_sw
+    raw_without_sw = map(lambda a: [filter(not_in, a[0]), filter(not_in, a[1]), a[2], filter(not_in, a[3]),
+                                    filter(not_in, a[4]), a[5]], raw_cut)
+
+    # 将所有文本list合并在一起
+    raw_text_all = map(lambda a: a[0]+a[1]+a[3]+a[4], raw_without_sw)
+
+    # 产生词典和语料库
+    dic_corpus = algorithm_collection.digitalize(raw_text_all)
+
+    # 生成词典矩阵
+    arr = matrix_former(dic_corpus[0], dic_corpus[1], dic_corpus)
+
+    raw_digitalized = map(lambda a, b: np.hstack((a, [b[2], b[5]])), arr, raw_without_sw)
+
+    return raw_digitalized
+
+
+def label_init(label):
+    return (1, 0) if label else (0, 1)

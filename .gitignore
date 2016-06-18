@@ -140,3 +140,4 @@ images/
 data/
 conf/pg_conf.py
 temp/
+record/
